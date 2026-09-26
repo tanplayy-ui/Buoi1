@@ -1,222 +1,297 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Globalization;
+using System.Text;
+
 class Program
 {
     static void Main(string[] args)
     {
-        List<Student> studentList = new List<Student>();
-        bool exit = false;
-        while (!exit)
+        List<Person> danhSach = new List<Person>();
+
+        bool thoat = false;
+
+        while (!thoat)
         {
-            Console.WriteLine("=== MENU ===");
-            Console.WriteLine("1. Them SV");
-            Console.WriteLine("2. Hien thi ds SV");
-            Console.WriteLine("3. Xuat SV thuoc khoa CNTT");
-            Console.WriteLine("4. Xuat SV co diem TB >= 5");
-            Console.WriteLine("5. Sap xep SV theo diem TB tang dan");
-            Console.WriteLine("6. Xuat SV co diem TB >= 5 thuoc khoa CNTT");
-            Console.WriteLine("7. Xuat SV co diem TB cao nhat thuoc khoa CNTT");
-            Console.WriteLine("8. Thong ke so luong SV theo xep loai");
+            Console.WriteLine("\n========== MENU ==========");
+            Console.WriteLine("1. Them sinh vien");
+            Console.WriteLine("2. Them giao vien");
+            Console.WriteLine("3. Xuat danh sach sinh vien");
+            Console.WriteLine("4. Xuat danh sach giao vien");
+            Console.WriteLine("5. So luong sinh vien va giao vien");
+            Console.WriteLine("6. Xuat sinh vien thuoc khoa CNTT");
+            Console.WriteLine("7. Xuat giao vien co dia chi chua Quan 9");
+            Console.WriteLine("8. Sinh vien co diem TB cao nhat thuoc khoa CNTT");
+            Console.WriteLine("9. Thong ke so luong tung xep loai");
             Console.WriteLine("0. Thoat");
-            Console.Write("CHON CHUC NANG (TU 0 -> 8): ");
-            string choice = Console.ReadLine();
-            switch (choice)
+
+            Console.Write("Chon chuc nang: ");
+            string luaChon = Console.ReadLine();
+
+            switch (luaChon)
             {
                 case "1":
-                    AddStudent(studentList);
+                    ThemSinhVien(danhSach);
                     break;
 
                 case "2":
-                    DisplayStudentList(studentList);
+                    ThemGiaoVien(danhSach);
                     break;
 
                 case "3":
-                    DisplayStudentsByFaculty(studentList, "CNTT");
+                    XuatDanhSachSinhVien(danhSach);
                     break;
 
                 case "4":
-                    DisplayStudentsWithHighAverageScore(studentList, 5);
+                    XuatDanhSachGiaoVien(danhSach);
                     break;
 
                 case "5":
-                    SortStudentsByAverageScore(studentList);
+                    DemSinhVienVaGiaoVien(danhSach);
                     break;
 
                 case "6":
-                    DisplayStudentsByFacultyAndScore(
-                        studentList, "CNTT", 5);
+                    XuatSinhVienTheoKhoa(danhSach, "CNTT");
                     break;
 
                 case "7":
-                    DisplayStudentsWithHighestAverageScoreByFaculty(
-                        studentList, "CNTT");
+                    XuatGiaoVienTheoDiaChi(danhSach, "Quan 9");
                     break;
 
                 case "8":
-                    CountStudentsByClassification(studentList);
+                    XuatSinhVienDiemCaoNhat(danhSach, "CNTT");
+                    break;
+
+                case "9":
+                    DemXepLoaiSinhVien(danhSach);
                     break;
 
                 case "0":
-                    exit = true;
+                    thoat = true;
                     Console.WriteLine("Ket thuc chuong trinh.");
                     break;
 
                 default:
-                    Console.WriteLine(
-                        "Tuy chon khong hop le. Vui long chon lai.");
+                    Console.WriteLine("Lua chon khong hop le!");
                     break;
             }
-
-            Console.WriteLine();
         }
     }
-    static void AddStudent(List<Student> studentList)
+
+    static void ThemSinhVien(List<Person> danhSach)
     {
-        Console.WriteLine("=== Nhap thong tin SV ===");
+        Console.WriteLine("\n=== NHAP THONG TIN SINH VIEN ===");
 
-        Student student = new Student();
+        Student sinhVien = new Student();
+        sinhVien.Nhap();
 
-        student.Input();
+        danhSach.Add(sinhVien);
 
-        studentList.Add(student);
-
-        Console.WriteLine("Them SV thanh cong!");
+        Console.WriteLine("Them sinh vien thanh cong!");
     }
-    static void DisplayStudentList(List<Student> studentList)
-    {
-        Console.WriteLine(
-            "=== Danh sach chi tiet thong tin SV ===");
 
-        foreach (Student student in studentList)
+    static void ThemGiaoVien(List<Person> danhSach)
+    {
+        Console.WriteLine("\n=== NHAP THONG TIN GIAO VIEN ===");
+
+        Teacher giaoVien = new Teacher();
+        giaoVien.Nhap();
+
+        danhSach.Add(giaoVien);
+
+        Console.WriteLine("Them giao vien thanh cong!");
+    }
+
+    static void XuatDanhSachSinhVien(List<Person> danhSach)
+    {
+        Console.WriteLine("\n=== DANH SACH SINH VIEN ===");
+
+        var danhSachSinhVien = danhSach
+            .OfType<Student>()
+            .ToList();
+
+        foreach (Student sinhVien in danhSachSinhVien)
         {
-            student.Show();
+            sinhVien.Xuat();
         }
     }
-    static void DisplayStudentsByFaculty(
-        List<Student> studentList, string faculty)
-    {
-        Console.WriteLine(
-            "=== Danh sach SV thuoc khoa {0} ===",
-            faculty);
 
-        var students = studentList
-            .Where(s => s.Faculty.Equals(
-                faculty,
-                StringComparison.OrdinalIgnoreCase))
+    static void XuatDanhSachGiaoVien(List<Person> danhSach)
+    {
+        Console.WriteLine("\n=== DANH SACH GIAO VIEN ===");
+
+        var danhSachGiaoVien = danhSach
+            .OfType<Teacher>()
             .ToList();
 
-        DisplayStudentList(students);
+        foreach (Teacher giaoVien in danhSachGiaoVien)
+        {
+            giaoVien.Xuat();
+        }
     }
-    static void DisplayStudentsWithHighAverageScore(
-        List<Student> studentList, float minDTB)
+
+    static void DemSinhVienVaGiaoVien(List<Person> danhSach)
+    {
+        int soSinhVien = danhSach
+            .OfType<Student>()
+            .Count();
+
+        int soGiaoVien = danhSach
+            .OfType<Teacher>()
+            .Count();
+
+        Console.WriteLine("\n=== SO LUONG ===");
+        Console.WriteLine("Tong so sinh vien: " + soSinhVien);
+        Console.WriteLine("Tong so giao vien: " + soGiaoVien);
+    }
+
+    static void XuatSinhVienTheoKhoa(
+        List<Person> danhSach,
+        string khoa)
     {
         Console.WriteLine(
-            "=== Danh sach sinh vien co diem TB >= {0} ===",
-            minDTB);
+            "\n=== SINH VIEN THUOC KHOA {0} ===",
+            khoa);
 
-        var students = studentList
-            .Where(s => s.AverageScore >= minDTB)
-            .ToList();
-
-        DisplayStudentList(students);
-    }
-    static void SortStudentsByAverageScore(
-        List<Student> studentList)
-    {
-        Console.WriteLine(
-            "=== danh sach SV duoc sap xep " +
-            "theo diem TB tang dan ===");
-
-        var sortedStudents = studentList
-            .OrderBy(s => s.AverageScore)
-            .ToList();
-
-        DisplayStudentList(sortedStudents);
-    }
-    static void DisplayStudentsByFacultyAndScore(
-        List<Student> studentList,
-        string faculty,
-        float minDTB)
-    {
-        Console.WriteLine(
-            "=== Danh sach SV co diem TB >= {0} " +
-            "va thuoc khoa {1} ===",
-            minDTB, faculty);
-
-        var students = studentList
+        var danhSachSinhVien = danhSach
+            .OfType<Student>()
             .Where(s =>
-                s.AverageScore >= minDTB &&
-                s.Faculty.Equals(
-                    faculty,
+                BoDauTiengViet(s.Faculty)
+                .Equals(
+                    BoDauTiengViet(khoa),
                     StringComparison.OrdinalIgnoreCase))
             .ToList();
 
-        DisplayStudentList(students);
+        foreach (Student sinhVien in danhSachSinhVien)
+        {
+            sinhVien.Xuat();
+        }
     }
-    static void DisplayStudentsWithHighestAverageScoreByFaculty(
-        List<Student> studentList,
-        string faculty)
+
+    static void XuatGiaoVienTheoDiaChi(
+        List<Person> danhSach,
+        string diaChi)
     {
         Console.WriteLine(
-            "=== SV co diem TB cao nhat " +
-            "thuoc khoa {0} ===",
-            faculty);
+            "\n=== GIAO VIEN CO DIA CHI CHUA {0} ===",
+            diaChi);
 
-        var students = studentList
-            .Where(s => s.Faculty.Equals(
-                faculty,
-                StringComparison.OrdinalIgnoreCase))
+        var danhSachGiaoVien = danhSach
+            .OfType<Teacher>()
+            .Where(g =>
+                BoDauTiengViet(g.Address)
+                .Contains(
+                    BoDauTiengViet(diaChi),
+                    StringComparison.OrdinalIgnoreCase))
             .ToList();
 
-        if (students.Count == 0)
+        foreach (Teacher giaoVien in danhSachGiaoVien)
         {
-            Console.WriteLine("Khong co SV thuoc khoa " + faculty);
+            giaoVien.Xuat();
+        }
+    }
+
+    static void XuatSinhVienDiemCaoNhat(
+        List<Person> danhSach,
+        string khoa)
+    {
+        Console.WriteLine(
+            "\n=== SINH VIEN CO DIEM CAO NHAT KHOA {0} ===",
+            khoa);
+
+        var danhSachSinhVien = danhSach
+            .OfType<Student>()
+            .Where(s =>
+                BoDauTiengViet(s.Faculty)
+                .Equals(
+                    BoDauTiengViet(khoa),
+                    StringComparison.OrdinalIgnoreCase))
+            .ToList();
+
+        if (danhSachSinhVien.Count == 0)
+        {
+            Console.WriteLine(
+                "Khong co sinh vien thuoc khoa " + khoa);
             return;
         }
 
-        float maxScore = students.Max(s => s.AverageScore);
+        float diemCaoNhat = danhSachSinhVien
+            .Max(s => s.AverageScore);
 
-        var result = students
-            .Where(s => s.AverageScore == maxScore)
+        var ketQua = danhSachSinhVien
+            .Where(s => s.AverageScore == diemCaoNhat)
             .ToList();
 
-        DisplayStudentList(result);
+        foreach (Student sinhVien in ketQua)
+        {
+            sinhVien.Xuat();
+        }
     }
-    static void CountStudentsByClassification(
-        List<Student> studentList)
+
+    static void DemXepLoaiSinhVien(
+        List<Person> danhSach)
     {
-        int xuatSac = studentList.Count(
-            s => s.AverageScore >= 9.0f &&
-                 s.AverageScore <= 10.0f);
+        var danhSachSinhVien = danhSach
+            .OfType<Student>()
+            .ToList();
 
-        int gioi = studentList.Count(
-            s => s.AverageScore >= 8.0f &&
-                 s.AverageScore < 9.0f);
+        int xuatSac = danhSachSinhVien.Count(
+            s => s.AverageScore >= 9 &&
+                 s.AverageScore <= 10);
 
-        int kha = studentList.Count(
-            s => s.AverageScore >= 7.0f &&
-                 s.AverageScore < 8.0f);
+        int gioi = danhSachSinhVien.Count(
+            s => s.AverageScore >= 8 &&
+                 s.AverageScore < 9);
 
-        int trungBinh = studentList.Count(
-            s => s.AverageScore >= 5.0f &&
-                 s.AverageScore < 7.0f);
+        int kha = danhSachSinhVien.Count(
+            s => s.AverageScore >= 7 &&
+                 s.AverageScore < 8);
 
-        int yeu = studentList.Count(
-            s => s.AverageScore >= 4.0f &&
-                 s.AverageScore < 5.0f);
+        int trungBinh = danhSachSinhVien.Count(
+            s => s.AverageScore >= 5 &&
+                 s.AverageScore < 7);
 
-        int kem = studentList.Count(
-            s => s.AverageScore < 4.0f);
+        int yeu = danhSachSinhVien.Count(
+            s => s.AverageScore >= 4 &&
+                 s.AverageScore < 5);
 
-        Console.WriteLine("=== THONG KE XEP LOAI ===");
+        int kem = danhSachSinhVien.Count(
+            s => s.AverageScore < 4);
 
-        Console.WriteLine("Xuất sắc: {0}", xuatSac);
-        Console.WriteLine("Giỏi:     {0}", gioi);
-        Console.WriteLine("Khá:      {0}", kha);
-        Console.WriteLine("Trung bình: {0}", trungBinh);
-        Console.WriteLine("Yếu:      {0}", yeu);
-        Console.WriteLine("Kém:      {0}", kem);
+        Console.WriteLine("\n=== THONG KE XEP LOAI ===");
+        Console.WriteLine("Xuat sac: " + xuatSac);
+        Console.WriteLine("Gioi: " + gioi);
+        Console.WriteLine("Kha: " + kha);
+        Console.WriteLine("Trung binh: " + trungBinh);
+        Console.WriteLine("Yeu: " + yeu);
+        Console.WriteLine("Kem: " + kem);
+    }
+
+    static string BoDauTiengViet(string chuoi)
+    {
+        if (string.IsNullOrEmpty(chuoi))
+            return chuoi;
+
+        string chuoiDaChuanHoa =
+            chuoi.Normalize(NormalizationForm.FormD);
+
+        StringBuilder ketQua = new StringBuilder();
+
+        foreach (char kyTu in chuoiDaChuanHoa)
+        {
+            UnicodeCategory loai =
+                CharUnicodeInfo.GetUnicodeCategory(kyTu);
+
+            if (loai != UnicodeCategory.NonSpacingMark)
+            {
+                ketQua.Append(kyTu);
+            }
+        }
+
+        return ketQua
+            .ToString()
+            .Replace("đ", "d")
+            .Replace("Đ", "D");
     }
 }
